@@ -4,9 +4,7 @@ const validateHeaders = (headers: mixed[]) =>
   headers.every(v => v === "") ? [] : headers;
 
 export const getHeaders = (def: Object): any[] =>
-  validateHeaders(
-    Object.entries(def).reduce((acc, [k, v]) => [...acc, v.title || k], [])
-  );
+  validateHeaders(Object.entries(def).map(([k, v]) => v.title || k));
 
 export const getDataLength = (def: Object) =>
   Math.max(...Object.values(def).map(v => v.data.length));
@@ -21,29 +19,25 @@ export const generateColumnSizes = (def: Object) =>
     .map(v => v.width || "1fr")
     .join(" ");
 
-const getTitles = obj =>
-  Object.entries(obj).reduce((acc, [k, v]) => {
-    if (v.title) {
-      return [...acc, v.title];
-    }
-    return [...acc, k];
-  }, []);
+const getTitles = obj => Object.entries(obj).map(([k, v]) => v.title || k);
 
 const getVal = obj => Object.values(obj).map(v => v.data);
 
 export const traverseChartData = (obj: Object) =>
-  [...Array(getDataLength(obj))].reduce(
-    (acc, v, mInd) => [
-      ...acc,
-      getTitles(obj).reduce(
-        (acc, v, ind) => ({ ...acc, [v]: getVal(obj)[ind][mInd] }),
-        {}
-      )
-    ],
-    []
+  [...Array(getDataLength(obj))].map((v, mInd) =>
+    getTitles(obj).reduce((acc, v, ind) => {
+      if (Object.values(obj)[ind].graph && Object.values(obj)[ind].options) {
+        return {
+          ...acc,
+          [v]: getVal(obj)[ind][mInd],
+          [`${v}ind`]: Object.values(obj)[ind].options.indicators.mainData[mInd]
+        };
+      }
+      return { ...acc, [v]: getVal(obj)[ind][mInd] };
+    }, {})
   );
 
-export const getRowStyle = (data: Object[], v: number) => {
+export const getRowStyle = (data: Object, v?: number) => {
   let res = {
     width: "100%",
     height: "100",
@@ -51,12 +45,12 @@ export const getRowStyle = (data: Object[], v: number) => {
     // placeContent: 'center',
     whiteSpace: "nowrap"
   };
-  if (data && data.graph) {
+  if (data?.graph && v) {
     res = {
       ...res,
       position: "relative",
       color: "#fff",
-      background: `linear-gradient(90deg, rgb(255,0,0) ${v}%, rgb(100,100,100) ${v}%)`
+      background: `linear-gradient(90deg, rgb(0,0,0) ${v}%, rgb(100,0,0) ${v}%)`
     };
   }
   if (data && data.style) {

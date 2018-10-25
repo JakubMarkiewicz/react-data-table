@@ -1,25 +1,17 @@
 // @flow
 
 import React from "react";
+import { FixedSizeList as List } from "react-window";
 import * as utils from "../utils/customChartUtils";
-import { Flipper, Flipped } from "react-flip-toolkit";
 
 import CustomBar from "./CustomBar";
 import CustomCell from "./CustomCell";
 import CustomHeader from "./CustomHeader";
 
-type PropType = {
-  def: Object,
-  options: Object
-};
-
-type StateType = {
-  activeSortDim: string,
-  sortDirection: string,
-  data: Object[]
-};
-
-class CustomChart extends React.Component<PropType, StateType> {
+class CustomChart extends React.PureComponent<
+  $CustomChartProps,
+  $CustomChartState
+> {
   chartRef = React.createRef();
 
   state = {
@@ -58,12 +50,11 @@ class CustomChart extends React.Component<PropType, StateType> {
     }));
 
   render() {
-    const { def, options, generalOptions } = this.props;
+    const { def, options } = this.props;
     const { activeSortDim, data, sortDirection } = this.state;
     const headers = utils.getHeaders(def);
-    const dataLength = utils.getDataLength(def);
     return (
-      <div className="custom-chart" style={{ ...generalOptions }}>
+      <div className="custom-chart" style={{ ...options.generalStyle }}>
         {!options.hideHeader && (
           <CustomHeader
             {...{
@@ -71,36 +62,55 @@ class CustomChart extends React.Component<PropType, StateType> {
               activeSortDim,
               setActiveSortDim: this.setActiveSortDim,
               sortDirection,
-              def
+              def,
+              options
             }}
           />
         )}
         <div className="custom-chart__body">
-          {data.map((singleEntry, ind) => (
-            <div className="body__row" key={`ccb-${ind}`}>
-              {headers.map(
-                v =>
-                  def[v].graph ? (
-                    <CustomBar key={v} {...{ v, def, singleEntry, options }} />
-                  ) : (
-                    <CustomCell
-                      key={v}
-                      {...{ v, def, value: singleEntry[v], options }}
-                    />
-                  )
-              )}
-            </div>
-          ))}
+          <List
+            height={500}
+            itemCount={data.length}
+            itemSize={
+              options.style.height +
+              Number(
+                options.style.margin.slice(
+                  0,
+                  options.style.margin.indexOf("px")
+                ) * 2
+              )
+            }
+          >
+            {({ index, style }) => (
+              <div className="body__row" key={`ccb-${index}`} style={style}>
+                {headers.map(
+                  v =>
+                    def[v].graph ? (
+                      <CustomBar
+                        columnName={v}
+                        entry={data[index]}
+                        {...{ options, def }}
+                      />
+                    ) : (
+                      <CustomCell
+                        columnName={v}
+                        value={data[index][v]}
+                        {...{ options, options }}
+                      />
+                    )
+                )}
+              </div>
+            )}
+          </List>
         </div>
 
         <style jsx>{`
+          * {
+            box-sizing: border-box;
+          }
           .body__row {
             width: 100%;
-            height: ${options.style.height
-              ? `${options.style.height}px`
-              : `calc(${Math.floor(100 / dataLength)}% - ${options.style
-                  .padding || 0 * 2}px)`};
-            margin: ${options.style.margin};
+            padding: ${options.style.margin || 0};
             display: grid;
             grid-template-columns: ${utils.generateColumnSizes(def)};
             position: relative;
@@ -115,34 +125,25 @@ export default CustomChart;
 
 CustomChart.defaultProps = {
   def: {
-    stacja: {
+    title: {
       data: [
-        "CODO 1",
-        "CODO 2",
-        "CODO 3",
-        "CODO 4",
-        "PKN ORLEN",
-        "CODO 5",
-        "CODO 6",
-        "DOFO 1",
-        "DOFO 2"
+        "Title 1",
+        "Title 2",
+        "Title 3",
+        "Title 4",
+        "Title 5",
+        "Title 6",
+        "Title 7",
+        "Title 8",
+        "Title 9"
       ]
     },
-    ocena: {
+    score: {
       data: [96, 91, 89, 100, 80, 75, 74, 71, 70],
       graph: "bar",
-      width: "50%",
-      options: {
-        indicators: {
-          main: false
-        }
-      }
+      width: "50%"
     },
-    zmiana: {
-      data: [0, -1, 2, 3, 3, -4, -3, -2, -2],
-      style: { fontWeight: 700 }
-    },
-    "liczba ocen": {
+    count: {
       data: [200, 200, 200, 200, 1800, 200, 200, 200, 200],
       style: { fontWeight: 700 }
     }
@@ -150,7 +151,7 @@ CustomChart.defaultProps = {
   options: {
     defaultSortDim: "ocena",
     style: {
-      margin: `40px 0`,
+      margin: `20px 0`,
       height: 30
     }
   }

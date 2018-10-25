@@ -3,28 +3,22 @@
 import React from "react";
 import { generateColumnSizes } from "../utils/customChartUtils";
 
-type PropType = {
-  headers: string[],
-  activeSortDim: string,
-  setActiveSortDim: Function,
-  sortDirection: string,
-  def: Object
-};
-
 const CustomHeader = ({
   headers,
   activeSortDim,
   setActiveSortDim,
   sortDirection,
-  def
-}: PropType) => (
-  <div className="custom-chart__header">
+  def,
+  options
+}: $CustomHeaderProps) => (
+  <div className="custom-chart__header" style={options.headerStyle || {}}>
     {headers.map(v => (
       <div
         className={activeSortDim === v ? "header__info active" : "header__info"}
         onClick={() => setActiveSortDim(v)}
         role="presentation"
         key={v}
+        style={options.headerElementStyle || {}}
       >
         {v}
       </div>
@@ -56,4 +50,4 @@ const CustomHeader = ({
   </div>
 );
 
-export default CustomHeader;
+export default React.memo(CustomHeader);

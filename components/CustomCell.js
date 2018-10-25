@@ -1,21 +1,14 @@
 // @flow
 
-import React from "react";
+import * as React from "react";
 import { getRowStyle } from "../utils/customChartUtils";
 
-type PropType = {
-  def: Object,
-  v: string,
-  options: Object,
-  value: number
-};
-
-const CustomCell = ({ def, v, options, value }: PropType) => (
+const CustomCell = ({ def, columnName, options, value }: $CustomCellProps) => (
   <div
     style={{
       height: options.style.height,
-      textAlign: "center",
-      ...getRowStyle(def[v], value)
+      textAlign: "center"
+      // ...getRowStyle(def[columnName]),
     }}
   >
     <span
@@ -30,4 +23,4 @@ const CustomCell = ({ def, v, options, value }: PropType) => (
   </div>
 );
 
-export default CustomCell;
+export default React.memo(CustomCell);

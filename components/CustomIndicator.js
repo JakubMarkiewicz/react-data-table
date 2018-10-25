@@ -2,15 +2,9 @@
 
 import React from 'react'
 
-type PropType = {
-  desc: string,
-  type: string,
-  value: number,
-}
-
-const CustomIndicator = ({ desc, type, value }: PropType) => (
+const CustomIndicator = ({ title, type, value }: $CustomIndicatorProps) => (
   <React.Fragment>
-    <div className="indicator-desc">{desc}</div>
+    <div className="indicator-desc">{title}</div>
     <div className="indicator">
       <i className="material-icons" style={{ fontSize: '20px' }}>
         play_arrow
