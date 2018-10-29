@@ -79,6 +79,3 @@ export const resolveNewDirection = (
   newDim: string,
   direction: string
 ) => (prevDim === newDim ? changeDirection(direction) : "descending");
-
-export const validIndicator = (def, type) =>
-  def.options && def.options.indicators && def.options.indicators[type];

@@ -1,6 +1,6 @@
 import React from "react";
 import { storiesOf } from "@storybook/react";
-import CustomChart from "../components/CustomChart";
+import CustomTable from "../components/CustomTable";
 
 const bodyStyle = {
   display: "grid",
@@ -21,7 +21,7 @@ storiesOf("Custom Table", module)
   .add("Virtualization", () => (
     <div style={bodyStyle}>
       <div style={{ width: 1000 }}>
-        <CustomChart
+        <CustomTable
           data={mockedData}
           def={{
             title: {},
@@ -36,13 +36,15 @@ storiesOf("Custom Table", module)
           options={{
             virtualize: true,
             defaultSortDim: "ocena",
-            style: {
-              margin: `20px 0`,
-              height: 30
-            },
-            colorScheme: ["rgb(50,150,50)", "rgb(200, 200, 200)"],
-            generalStyle: {
-              height: 650
+            theme: {
+              tableStyle: {
+                height: 650
+              },
+              rowStyle: {
+                margin: `20px 0`,
+                height: 30
+              },
+              colorScheme: ["rgb(50,150,50)", "rgb(200, 200, 200)"]
             }
           }}
         />
@@ -52,7 +54,7 @@ storiesOf("Custom Table", module)
   .add("No Virtualization", () => (
     <div style={bodyStyle}>
       <div style={{ width: 1000 }}>
-        <CustomChart
+        <CustomTable
           data={mockedData}
           def={{
             title: {},
@@ -80,22 +82,14 @@ storiesOf("Custom Table", module)
   .add("Main indicator", () => (
     <div style={bodyStyle}>
       <div style={{ width: 1000 }}>
-        <CustomChart
+        <CustomTable
           data={mockedData}
           def={{
             title: {},
             score: {
               graph: "bar",
               width: "50%",
-              options: {
-                indicators: {
-                  main: true,
-                  mainData: [...Array(300)].map(v =>
-                    Math.floor(Math.random() * 101)
-                  ),
-                  mainTitle: "previous"
-                }
-              }
+              indicators: ["count", "count2", "count3"]
             },
             count: {
               style: { fontWeight: 700 }
@@ -113,14 +107,17 @@ storiesOf("Custom Table", module)
           options={{
             virtualize: true,
             defaultSortDim: "ocena",
-            generalStyle: {
-              height: 700
-            },
-            style: {
-              margin: `20px 0`,
-              height: 30
-            },
-            colorScheme: ["rgb(50,150,50)", "rgb(200, 200, 200)"]
+            theme: {
+              tableStyle: {
+                height: 700,
+                fontFamily: "Arial"
+              },
+              rowStyle: {
+                margin: "30px 0",
+                height: 30
+              },
+              colorScheme: ["rgb(50,150,50)", "rgb(200, 200, 200)"]
+            }
           }}
         />
       </div>
@@ -129,7 +126,7 @@ storiesOf("Custom Table", module)
   .add("Main indicator - size test", () => (
     <div style={bodyStyle}>
       <div style={{ width: 1000 }}>
-        <CustomChart
+        <CustomTable
           data={mockedData}
           def={{
             title: {},
@@ -162,13 +159,15 @@ storiesOf("Custom Table", module)
           options={{
             virtualize: true,
             defaultSortDim: "ocena",
-            generalStyle: {
-              height: 700,
-              fontFamily: "Arial"
-            },
-            style: {
-              margin: `30px 0`,
-              height: 60
+            theme: {
+              tableStyle: {
+                height: 700,
+                fontFamily: "Arial"
+              },
+              rowStyle: {
+                margin: "30px 0",
+                height: 60
+              }
             },
             colorScheme: ["rgb(50,150,50)", "rgb(200, 200, 200)"]
           }}

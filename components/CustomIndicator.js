@@ -10,7 +10,10 @@ const CustomIndicator = ({
   options
 }: $CustomIndicatorProps) => {
   const textPosition = {
-    left: `calc(${value}% - ${Math.abs(1 - title.length * 4 + title.length)}px)`
+    left: `calc(${value}% - ${Math.abs(
+      1 - title.length * 4 + title.length
+    )}px)`,
+    [type === "main" ? "top" : "bottom"]: "-20px"
   };
   const position = { left: `calc(${value}% - 15px)` };
   return (
@@ -18,23 +21,31 @@ const CustomIndicator = ({
       <div className="indicator-desc" style={textPosition} title={value}>
         {title}
       </div>
-      <div className="indicator" style={position}>
+      <div
+        className="indicator"
+        style={{
+          ...position,
+          transform: `rotate(${type === "main" ? "90" : "-90"}deg)`,
+          top:
+            type === "main"
+              ? `${-options.theme.rowStyle.height / 2}px`
+              : `${options.theme.rowStyle.height / 2}px`
+        }}
+      >
         <img src={test} alt="indicator" />
       </div>
       <style jsx>{`
         .indicator {
-          top: ${-options.style.height / 2}px;
           height: 100%;
           color: #000;
           position: absolute;
-          transform: rotate(${type === "main" ? "90" : "-45"}deg);
         }
         .indicator-desc {
-          top: -20px;
           text-align: center;
           position: absolute;
-          color: #000;
+          color: transparent;
           font-size: 12px;
+          color: #000;
         }
       `}</style>
     </React.Fragment>

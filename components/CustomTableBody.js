@@ -7,7 +7,11 @@ import { FixedSizeList as List } from "react-window";
 
 const CustomTableBody = ({ options, headers, data, def, utils }) => {
   const tableRow = ({ index, style }) => (
-    <div className="body__row" key={`ccb-${index}`} style={style}>
+    <div
+      className={index % 2 === 0 ? "body__row" : "body__row body__row--even"}
+      key={`ccb-${index}`}
+      style={style}
+    >
       {headers.map(
         v =>
           def[v].graph ? (
@@ -28,13 +32,13 @@ const CustomTableBody = ({ options, headers, data, def, utils }) => {
         .body__row {
           box-sizing: border-box;
           width: 100%;
-          padding: ${options.style.margin || 0};
+          padding: ${options.theme.rowStyle.margin || 0};
           display: grid;
           grid-template-columns: ${utils.generateColumnSizes(def, headers)};
           position: relative;
           border-bottom: 1px solid #e5e6e7;
         }
-        .body__row:nth-child(even) {
+        .body__row--even {
           background: #ededed;
         }
       `}</style>
@@ -44,13 +48,15 @@ const CustomTableBody = ({ options, headers, data, def, utils }) => {
   return options.virtualize ? (
     <div className="custom-table__body">
       <List
-        height={options.generalStyle.height}
+        height={options.theme.tableStyle.height}
         itemCount={data.length}
         itemSize={
-          options.style.height +
+          options.theme.rowStyle.height +
           Number(
-            options.style.margin.slice(0, options.style.margin.indexOf("px")) *
-              2
+            options.theme.rowStyle.margin.slice(
+              0,
+              options.theme.rowStyle.margin.indexOf("px")
+            ) * 2
           )
         }
       >

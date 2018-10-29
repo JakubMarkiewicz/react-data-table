@@ -18,7 +18,7 @@ const CustomHeader = ({
         onClick={() => setActiveSortDim(v)}
         role="presentation"
         key={v}
-        style={options.headerElementStyle || {}}
+        style={options.theme.headerElementStyle || {}}
       >
         {v}
       </div>

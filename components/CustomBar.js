@@ -1,7 +1,7 @@
 // @flow
 
 import React from "react";
-import { getRowStyle, validIndicator } from "../utils/customChartUtils";
+import { getRowStyle } from "../utils/customChartUtils";
 import CustomIndicator from "./CustomIndicator";
 
 class CustomBar extends React.Component<$CustomBarProps, void> {
@@ -38,33 +38,31 @@ class CustomBar extends React.Component<$CustomBarProps, void> {
         <div className="graph__score">{score}</div>
         <div
           className="graph__bar"
-          style={getRowStyle(entryDef, score, options.colorScheme)}
+          style={getRowStyle(entryDef, score, options.theme.colorScheme)}
           ref={this.barRef}
         >
-          {validIndicator(entryDef, "main") && (
-            <CustomIndicator
-              title={def[columnName].options.indicators.mainTitle}
-              type={"main"}
-              value={entry[`${columnName}MainInd`]}
-              options={options}
-            />
-          )}
+          {entryDef.indicators &&
+            entryDef.indicators.map((indicator, ind) => (
+              <CustomIndicator
+                title={indicator}
+                type={ind % 2 === 0 ? "main" : "secondary"}
+                value={entry[indicator]}
+                options={options}
+              />
+            ))}
         </div>
         <style jsx>{`
           .graph {
             display: grid;
-            grid-template-columns: ${options.style.height}px 1fr;
+            grid-template-columns: ${options.theme.rowStyle.height}px 1fr;
           }
           .graph__score {
             display: grid;
             place-content: center;
-            border-right: 1px solid
-              ${options.colorScheme ? options.colorScheme[1] : "grey"};
-            background: ${options.colorScheme
-              ? options.colorScheme[0]
-              : "grey"};
+            border-right: 1px solid ${options.theme.colorScheme[1]};
+            background: ${options.theme.colorScheme[0]};
             color: #fff;
-            font-size: calc(0.6 * ${options.style.height}px);
+            font-size: calc(0.6 * ${options.theme.rowStyle.height}px);
             font-weight: 700;
           }
         `}</style>
