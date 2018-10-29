@@ -3,8 +3,15 @@
 const validateHeaders = (headers: mixed[]) =>
   headers.every(v => v === "") ? [] : headers;
 
-export const getHeaders = (def: Object): any[] =>
-  validateHeaders(Object.entries(def).map(([k, v]) => v.title || k));
+export const getHeaders = (def: Object, data: Object[]): any[] =>
+  validateHeaders(
+    Object.entries(def).map(([k, v]) => {
+      if (Object.keys(data[0]).includes(k)) {
+        return v.title || k;
+      }
+      return "";
+    })
+  ).filter(v => v !== "");
 
 export const getDataLength = (def: Object) =>
   Math.max(...Object.values(def).map(v => v.data.length));
@@ -14,43 +21,36 @@ export const getValues = (def: Object): Array<Array<number>> =>
     Object.values(def).map(v => v.data[ind])
   );
 
-export const generateColumnSizes = (def: Object) =>
-  Object.values(def)
-    .map(v => v.width || "1fr")
+export const generateColumnSizes = (def: Object, headers: string[]) =>
+  headers &&
+  Object.entries(def)
+    .filter(([k, v]) => headers.includes(k) || headers.includes(v.title))
+    .map(([k, v]) => v.width || "1fr")
     .join(" ");
 
-const getTitles = obj => Object.entries(obj).map(([k, v]) => v.title || k);
-
-const getVal = obj => Object.values(obj).map(v => v.data);
-
-export const traverseChartData = (obj: Object) =>
-  [...Array(getDataLength(obj))].map((v, mInd) =>
-    getTitles(obj).reduce((acc, v, ind) => {
-      if (Object.values(obj)[ind].graph && Object.values(obj)[ind].options) {
-        return {
-          ...acc,
-          [v]: getVal(obj)[ind][mInd],
-          [`${v}ind`]: Object.values(obj)[ind].options.indicators.mainData[mInd]
-        };
-      }
-      return { ...acc, [v]: getVal(obj)[ind][mInd] };
-    }, {})
-  );
-
-export const getRowStyle = (data: Object, v?: number) => {
+export const getRowStyle = (
+  data: Object,
+  v?: number,
+  colorScheme?: string[]
+) => {
   let res = {
+    boxSizing: "border-box",
     width: "100%",
-    height: "100",
     display: "grid",
-    // placeContent: 'center',
+    textAlign: "center",
+    alignContent: "center",
     whiteSpace: "nowrap"
   };
-  if (data?.graph && v) {
+  if (data.graph && typeof v === "number") {
     res = {
       ...res,
       position: "relative",
       color: "#fff",
-      background: `linear-gradient(90deg, rgb(0,0,0) ${v}%, rgb(100,0,0) ${v}%)`
+      background: `linear-gradient(90deg, ${colorScheme[0]} ${v}%, ${
+        colorScheme[1]
+      } ${v}%)`,
+      borderTopRightRadius: "3px",
+      borderBottomRightRadius: "3px"
     };
   }
   if (data && data.style) {

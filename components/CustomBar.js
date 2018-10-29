@@ -8,27 +8,26 @@ class CustomBar extends React.Component<$CustomBarProps, void> {
   barRef = React.createRef();
 
   // componentDidMount() {
-  //   this.animate(0, this.props.singleEntry[this.props.v])
+  //   this.animate(0, this.props.entry[this.props.columnName]);
   // }
 
   // componentDidUpdate() {
-  //   const { options, singleEntry, v } = this.props
-  //   console.log('test')
+  //   const { options, entry, columnName } = this.props;
   //   this.barRef.current.style.background = `linear-gradient(90deg, ${
   //     options.colorScheme[0]
-  //   } ${singleEntry[v]}%, ${options.colorScheme[1]} ${singleEntry[v]}%)`
+  //   } ${entry[columnName]}%, ${options.colorScheme[1]} ${entry[columnName]}%)`;
   // }
 
   // animate = (start, end) => {
-  //   const { options } = this.props
-  //   const stepCount = 200 / 16
-  //   const stepSize = (end - start) / stepCount
-  //   const val = start + stepSize
+  //   const { options } = this.props;
+  //   const stepCount = 200 / 16;
+  //   const stepSize = (end - start) / stepCount;
+  //   const val = start + stepSize;
   //   this.barRef.current.style.background = `linear-gradient(90deg, ${
   //     options.colorScheme[0]
-  //   } ${val}%, ${options.colorScheme[1]} ${val}%)`
-  //   if (val <= end) requestAnimationFrame(() => this.animate(val, end))
-  // }
+  //   } ${val}%, ${options.colorScheme[1]} ${val}%)`;
+  //   if (val <= end) requestAnimationFrame(() => this.animate(val, end));
+  // };
 
   render() {
     const { def, columnName, entry, options } = this.props;
@@ -39,14 +38,15 @@ class CustomBar extends React.Component<$CustomBarProps, void> {
         <div className="graph__score">{score}</div>
         <div
           className="graph__bar"
-          style={getRowStyle(entryDef, score)}
+          style={getRowStyle(entryDef, score, options.colorScheme)}
           ref={this.barRef}
         >
           {validIndicator(entryDef, "main") && (
             <CustomIndicator
-              title="Q3 2018" // TODO: no hardcoded vals
-              type="main"
-              value={entry[`${columnName}ind`]}
+              title={def[columnName].options.indicators.mainTitle}
+              type={"main"}
+              value={entry[`${columnName}MainInd`]}
+              options={options}
             />
           )}
         </div>
@@ -58,8 +58,11 @@ class CustomBar extends React.Component<$CustomBarProps, void> {
           .graph__score {
             display: grid;
             place-content: center;
-            border-right: 1px solid ${"grey"}; // TODO: optional chaining from colorscheme
-            background: ${"transparent"};
+            border-right: 1px solid
+              ${options.colorScheme ? options.colorScheme[1] : "grey"};
+            background: ${options.colorScheme
+              ? options.colorScheme[0]
+              : "grey"};
             color: #fff;
             font-size: calc(0.6 * ${options.style.height}px);
             font-weight: 700;

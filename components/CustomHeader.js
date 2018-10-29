@@ -30,8 +30,10 @@ const CustomHeader = ({
         place-content: center;
         text-align: center;
         font-size: 1em;
-        grid-template-columns: ${generateColumnSizes(def)};
+        grid-template-columns: ${generateColumnSizes(def, headers)};
         user-select: none;
+        box-sizing: border-box;
+        border-bottom: 1px solid rgb(200, 200, 200);
       }
       .header__info {
         width: 100%;
@@ -41,6 +43,7 @@ const CustomHeader = ({
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         padding: 3px;
         text-transform: uppercase;
+        box-sizing: border-box;
       }
       .active {
         box-shadow: inset 0 ${sortDirection === "ascending" ? "-3px" : "3px"} 0

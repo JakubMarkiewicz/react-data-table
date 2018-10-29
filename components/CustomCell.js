@@ -6,9 +6,7 @@ import { getRowStyle } from "../utils/customChartUtils";
 const CustomCell = ({ def, columnName, options, value }: $CustomCellProps) => (
   <div
     style={{
-      height: options.style.height,
-      textAlign: "center"
-      // ...getRowStyle(def[columnName]),
+      ...getRowStyle(def[columnName])
     }}
   >
     <span

@@ -1,12 +1,10 @@
 // @flow
 
 import React from "react";
-import { FixedSizeList as List } from "react-window";
 import * as utils from "../utils/customChartUtils";
-
-import CustomBar from "./CustomBar";
-import CustomCell from "./CustomCell";
+import CustomTableBody from "./CustomTableBody";
 import CustomHeader from "./CustomHeader";
+import isEqual from "lodash/isEqual";
 
 class CustomChart extends React.PureComponent<
   $CustomChartProps,
@@ -16,43 +14,45 @@ class CustomChart extends React.PureComponent<
 
   state = {
     activeSortDim: this.props.options.defaultSortDim || "",
-    data: utils.traverseChartData(this.props.def),
-    sortDirection: "descending"
+    data: this.props.data,
+    sortDirection: "descending",
+    def: this.props.def
   };
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (!isEqual(nextProps.def, prevState.def)) {
+      return {
+        data: utils.traverseChartData(nextProps.def),
+        def: nextProps.def
+      };
+    }
+  }
+
   componentDidMount() {
-    this.setState(prevState => ({
-      data: utils.sortByDim(
-        prevState.data,
-        prevState.activeSortDim,
-        prevState.sortDirection
-      )
+    this.setState(({ data, activeSortDim, sortDirection }) => ({
+      data: utils.sortByDim(data, activeSortDim, sortDirection)
     }));
   }
 
   setActiveSortDim = (dim: string) =>
-    this.setState(prevState => ({
+    this.setState(({ data, activeSortDim, sortDirection }) => ({
       activeSortDim: dim,
       data: utils.sortByDim(
-        prevState.data,
+        data,
         dim,
-        utils.resolveNewDirection(
-          prevState.activeSortDim,
-          dim,
-          prevState.sortDirection
-        )
+        utils.resolveNewDirection(activeSortDim, dim, sortDirection)
       ),
       sortDirection: utils.resolveNewDirection(
-        prevState.activeSortDim,
+        activeSortDim,
         dim,
-        prevState.sortDirection
+        sortDirection
       )
     }));
 
   render() {
     const { def, options } = this.props;
     const { activeSortDim, data, sortDirection } = this.state;
-    const headers = utils.getHeaders(def);
+    const headers = utils.getHeaders(def, data);
     return (
       <div className="custom-chart" style={{ ...options.generalStyle }}>
         {!options.hideHeader && (
@@ -67,55 +67,7 @@ class CustomChart extends React.PureComponent<
             }}
           />
         )}
-        <div className="custom-chart__body">
-          <List
-            height={500}
-            itemCount={data.length}
-            itemSize={
-              options.style.height +
-              Number(
-                options.style.margin.slice(
-                  0,
-                  options.style.margin.indexOf("px")
-                ) * 2
-              )
-            }
-          >
-            {({ index, style }) => (
-              <div className="body__row" key={`ccb-${index}`} style={style}>
-                {headers.map(
-                  v =>
-                    def[v].graph ? (
-                      <CustomBar
-                        columnName={v}
-                        entry={data[index]}
-                        {...{ options, def }}
-                      />
-                    ) : (
-                      <CustomCell
-                        columnName={v}
-                        value={data[index][v]}
-                        {...{ options, options }}
-                      />
-                    )
-                )}
-              </div>
-            )}
-          </List>
-        </div>
-
-        <style jsx>{`
-          * {
-            box-sizing: border-box;
-          }
-          .body__row {
-            width: 100%;
-            padding: ${options.style.margin || 0};
-            display: grid;
-            grid-template-columns: ${utils.generateColumnSizes(def)};
-            position: relative;
-          }
-        `}</style>
+        <CustomTableBody {...{ options, headers, data, def, utils }} />
       </div>
     );
   }
@@ -126,33 +78,25 @@ export default CustomChart;
 CustomChart.defaultProps = {
   def: {
     title: {
-      data: [
-        "Title 1",
-        "Title 2",
-        "Title 3",
-        "Title 4",
-        "Title 5",
-        "Title 6",
-        "Title 7",
-        "Title 8",
-        "Title 9"
-      ]
+      data: [...Array(300)].map((v, i) => `Title ${i}`)
     },
     score: {
-      data: [96, 91, 89, 100, 80, 75, 74, 71, 70],
+      data: [...Array(300)].map((v, i) => Math.floor(Math.random() * 101)),
       graph: "bar",
       width: "50%"
     },
     count: {
-      data: [200, 200, 200, 200, 1800, 200, 200, 200, 200],
+      data: [...Array(300)].map((v, i) => Math.floor(Math.random() * 101)),
       style: { fontWeight: 700 }
     }
   },
   options: {
+    virtualize: true,
     defaultSortDim: "ocena",
     style: {
       margin: `20px 0`,
       height: 30
-    }
+    },
+    colorScheme: ["rgb(50,150,50)", "rgb(200, 200, 200)"]
   }
 };

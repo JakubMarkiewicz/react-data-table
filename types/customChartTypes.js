@@ -8,16 +8,17 @@ type $CustomChartOptions = {
   colorScheme?: string[],
   defaultSortDim?: string,
   hideHeader?: boolean,
-}
+  virtualize?: boolean
+};
 
 type $CustomChartDefOptions = {
   indicators?: {
     main?: boolean,
     mainData?: string[] | number[],
     secondary?: boolean,
-    secondaryData?: string[] | number[],
-  },
-}
+    secondaryData?: string[] | number[]
+  }
+};
 
 type $CustomChartDef = {
   [string]: {
@@ -25,20 +26,20 @@ type $CustomChartDef = {
     graph?: string,
     options?: $CustomChartDefOptions,
     style?: Object,
-    width?: string | number, // TODO: allow passing number as width (px),
-  },
-}
+    width?: string | number // TODO: allow passing number as width (px),
+  }
+};
 
 type $CustomChartProps = {
   def: $CustomChartDef,
-  options?: $CustomChartOptions,
-}
+  options?: $CustomChartOptions
+};
 
 type $CustomChartState = {
   activeSortDim: string,
   data: Object[],
-  sortDirection: string,
-}
+  sortDirection: string
+};
 
 // CustomBar
 
@@ -46,8 +47,8 @@ type $CustomBarProps = {
   options?: $CustomChartOptions,
   columnName: string,
   entry: Object,
-  def: $CustomChartDef,
-}
+  def: $CustomChartDef
+};
 
 // CustomCell
 
@@ -55,16 +56,16 @@ type $CustomCellProps = {
   def: $CustomChartDef,
   columnName: string,
   options?: $CustomChartOptions,
-  value: number | string,
-}
+  value: number | string
+};
 
 // CustomIndicator
 
 type $CustomIndicatorProps = {
   title: string | number,
-  type: 'main' | 'secondary',
-  value: number,
-}
+  type: "main" | "secondary",
+  value: number
+};
 
 // CustomHeader
 
@@ -74,5 +75,5 @@ type $CustomHeaderProps = {
   setActiveSortDim: Function,
   sortDirecion: string,
   def: $CustomChartDef,
-  options: $Cust,
-}
+  options: $Cust
+};
